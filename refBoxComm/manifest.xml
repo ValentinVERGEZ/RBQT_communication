@@ -1,0 +1,20 @@
+<package>
+  <description brief="refBoxComm">
+
+     refBoxComm
+
+  </description>
+  <author>vincent</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/refBoxComm</url>
+  <depend package="std_msgs"/>
+  <depend package="geometry_msgs"/>
+  <depend package="rospy"/>
+  <depend package="roscpp"/>
+  
+  
+
+</package>
+
+
