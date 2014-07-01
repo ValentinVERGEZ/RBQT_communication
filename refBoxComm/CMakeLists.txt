@@ -54,6 +54,12 @@ rosbuild_add_executable(
   src/refBoxCommNode.cpp 
 )
 
+rosbuild_add_executable(
+  eiListener
+  src/explorationInfoListenerNode.cpp 
+)
+
+
 target_link_libraries(
   refBoxComm 
 
@@ -68,6 +74,11 @@ target_link_libraries(
   
   ${roscpp_LIBRARIES}
   
+)
+
+target_link_libraries( 
+  eiListener
+  ${roscpp_LIBRARIES}
 )
 
 rosbuild_add_compile_flags(refBoxTransport -std=c++0x)
