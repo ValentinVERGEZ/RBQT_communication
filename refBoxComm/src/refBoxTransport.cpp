@@ -143,10 +143,45 @@ void refBoxTransport::init()
 	message_register.add_message_type<RobotInfo>();
 
 
+	std::string cfg_prefix = std::string("/llsfrb/comm/")
+			+ ((m_team_color_ == CYAN) ? "cyan" : "magenta") + "-peer/";
+
+	/*
+	 // better to this dynamically be reacting to the public GameState
+	 // this way you can also play unencrypted training games
+	 std::string crypto_key = "", cipher = "aes-128-cbc";
+	 try {
+	 crypto_key = config_->get_string(("/llsfrb/game/crypto-keys/" + team_name_).c_str());
+	 } catch (Exception &e) {
+	 printf("No encryption key configured for team, not enabling crypto");
+	 }
+	 */
+
+    if (m_config_->exists((cfg_prefix + "send-port").c_str())
+		    && m_config_->exists((cfg_prefix + "recv-port").c_str())) 
+    {
+	    m_peer_team_ = new ProtobufBroadcastPeer(
+			    m_config_->get_string((cfg_prefix + "host").c_str()),
+			    m_config_->get_uint((cfg_prefix + "recv-port").c_str()),
+			    m_config_->get_uint((cfg_prefix + "send-port").c_str()),
+			    &message_register /*, crypto_key, cipher*/);
+    } 
+    else 
+    {
+	    m_peer_team_ = new ProtobufBroadcastPeer(
+			    m_config_->get_string((cfg_prefix + "host").c_str()),
+			    m_config_->get_uint((cfg_prefix + "port").c_str()),
+			    &message_register/*, crypto_key, cipher*/);
+    }
+
+
 	m_peer_public_->signal_received().connect(boost::bind(&refBoxTransport::handle_message, this, _1, _2, _3, _4));
 	m_peer_public_->signal_recv_error().connect(boost::bind(&refBoxTransport::handle_recv_error, this, _1, _2));
 	m_peer_public_->signal_send_error().connect(boost::bind(&refBoxTransport::handle_send_error, this, _1));
 	
+	m_peer_team_->signal_received().connect(boost::bind(&refBoxTransport::handle_message, this, _1, _2, _3, _4));
+	m_peer_team_->signal_recv_error().connect(boost::bind(&refBoxTransport::handle_recv_error, this, _1, _2));
+	m_peer_team_->signal_send_error().connect(boost::bind(&refBoxTransport::handle_send_error, this, _1));
 
 /*
 #if BOOST_ASIO_VERSION >= 100601
@@ -295,16 +330,51 @@ void refBoxTransport::handle_message(boost::asio::ip::udp::endpoint &sender,
         int sec  = gs->game_time().sec() - hour * 3600 - min * 60;
 
 #if __WORDSIZE == 64
-        printf("GameState received:  %02i:%02i:%02i.%02ld  %s %s  %u:%u points\n",
+        printf("GameState received:  %02i:%02i:%02i.%02ld  %s %s  %u:%u points, %s vs. %s\n",
 #else
-        printf("GameState received:  %02i:%02i:%02i.%02lld  %s %s  %u:%u points\n",
+        printf("GameState received:  %02i:%02i:%02i.%02lld  %s %s  %u:%u points, %s vs. %s\n",
 #endif
             hour, min, sec, gs->game_time().nsec() / 1000000,
-            llsf_msgs::GameState::Phase_Name(gs->phase()).c_str(),
-            llsf_msgs::GameState::State_Name(gs->state()).c_str(),
-            gs->points_cyan(), gs->points_magenta());
+        llsf_msgs::GameState::Phase_Name(gs->phase()).c_str(),
+        llsf_msgs::GameState::State_Name(gs->state()).c_str(),
+        gs->points_cyan(), gs->points_magenta(),
+        gs->team_cyan().c_str(), gs->team_magenta().c_str());
 
+		if (m_team_name_ == gs->team_cyan() || m_team_name_ == gs->team_magenta()) 
+		{
+            if (m_team_name_ == gs->team_cyan() && m_team_color_ != CYAN) 
+            {
+	            printf("WARNING: sending as magenta, but our team is announced as cyan by refbox!\n");
+            } 
+            else if (m_team_name_ == gs->team_magenta() && m_team_color_ != MAGENTA) 
+            {
+	            printf("WARNING: sending as cyan, but our team is announced as magenta by refbox!\n");
+            }
+            if (!m_crypto_setup_) 
+            {
+                m_crypto_setup_ = true;
 
+                try 
+                {
+                    m_crypto_key = m_config_->get_string(
+                            ("/llsfrb/game/crypto-keys/" + m_team_name_).c_str());
+                    printf("Set crypto key to %s (cipher %s)\n",
+                    m_crypto_key.c_str(), m_cipher.c_str());
+                    m_peer_team_->setup_crypto(m_crypto_key, m_cipher);
+                } 
+                catch (Exception &e) 
+                {
+                    printf("No encryption key configured for team, not enabling crypto");
+                }
+            }
+        } 
+        else if (m_crypto_setup_) 
+        {
+            printf("Our team is not set, training game? Disabling crypto.\n");
+            m_crypto_setup_ = false;
+            m_peer_team_->setup_crypto("", "");
+        }
+        
         m_gameState = *gs;
         
         switch (gs->phase())
@@ -475,14 +545,14 @@ void refBoxTransport::handle_timer()
         m_beaconSignal.set_team_color(m_team_color_);
         m_beaconSignal.set_seq(++m_seq_);
 
-        m_peer_public_->send(m_beaconSignal);
+        m_peer_team_->send(m_beaconSignal);
 
 
         //sending machines
         if (m_machineToReport.machines_size() != 0 && m_gamePhase == PHASE_EXPLORATION)
         {
             m_machineToReport.set_team_color(m_team_color_);
-            m_peer_public_->send(m_machineToReport);
+            m_peer_team_->send(m_machineToReport);
 
         }
     
