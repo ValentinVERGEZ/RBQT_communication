@@ -17,10 +17,14 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "geometry_msgs/Pose2D.h"
+#include "geometry_msgs/Pose.h"
+#include "nav_msgs/Odometry.h"
 #include "turtlesim/Pose.h"
 #include "refBoxComm/GameState.h"
 #include "refBoxComm/ExplorationInfo.h"
 #include "refBoxComm/ReportMachine.h"
+#include <tf/transform_datatypes.h>
+
 
 #include <msgs/Team.pb.h>
 #include <msgs/GameState.pb.h>
@@ -33,7 +37,7 @@ refBoxTransport refboxT;
 bool Report(refBoxComm::ReportMachine::Request  &req,
             refBoxComm::ReportMachine::Response &res);
 
-void PoseCallback(const turtlesim::Pose &pose);
+void PoseCallback(const nav_msgs::Odometry &odom);
 
 refBoxComm::GameState llsf2ros_gameState(llsf_msgs::GameState llsfGameState, Team team_color);
 refBoxComm::ExplorationInfo llsf2ros_explorationInfo(llsf_msgs::ExplorationInfo llsfExplorationInfo, Team team_color);
@@ -57,7 +61,7 @@ int main(int argc, char **argv)
     ros::ServiceServer service = n.advertiseService("/refBoxComm/ReportMachine", Report);
   
     //TODO: A remplacer par le topic donnant la position du robotino
-    ros::Subscriber sub = n.subscribe("/turtle1/pose", 1000, PoseCallback);
+    ros::Subscriber sub = n.subscribe("/odom", 1000, PoseCallback);
   
     ros::Rate loop_rate(loopFreq);
 
@@ -106,10 +110,12 @@ bool Report(refBoxComm::ReportMachine::Request  &req,
     return true;
 }
 
-void PoseCallback(const turtlesim::Pose &pose)
+void PoseCallback(const nav_msgs::Odometry &odom)
 {
     //ROS_INFO("Robot pose (%.3f, %.3f, %.3f)", pose.x, pose.y, pose.theta);
-    refboxT.set_pose(pose.x, pose.y, pose.theta);
+    refboxT.set_pose(odom.pose.pose.position.x, 
+                     odom.pose.pose.position.y, 
+                     tf::getYaw(odom.pose.pose.orientation));
 }
 
 refBoxComm::GameState llsf2ros_gameState(llsf_msgs::GameState llsfGameState, Team team_color)
