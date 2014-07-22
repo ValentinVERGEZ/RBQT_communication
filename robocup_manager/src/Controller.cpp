@@ -13,6 +13,7 @@
 #include <ros/ros.h>
 #include <tf/transform_datatypes.h>
 #include <boost/bind.hpp>
+#include <string.h>
 
 #include "Controller.h"
 #include "refBoxComm/GameState.h"
@@ -24,13 +25,35 @@
 #include "rbqt_lecture_feu_tricolore/LightSignal.h"
 
 
+Controller::Controller(): m_nh("~")
+{
 
-Controller::Controller(std::string robotName, int robotNumber) {
+	m_stopController = false;
+
+	std::string t;
+	m_nh.getParam("team", t);
+	m_team = (t=="cyan" ? Controller::cyan : Controller::magenta);
+	ROS_INFO("Robot team : %s", t.c_str());
+
+	m_nh.getParam("robot_name", m_robotName);
+	ROS_INFO("Robot name : %s", m_robotName.c_str());
+
+	m_robotNumber = stoi(m_robotName.substr(1));
+	ROS_INFO("Robot number : %d", m_robotNumber);
+
+
+
+	m_lastPathId=0;
+}
+
+Controller::Controller(std::string robotName, int robotNumber, Team team): m_nh("~")
+{
 
 	m_stopController = false;
 
 	m_robotName = robotName;
 	m_robotNumber = robotNumber;
+	m_team = team;
 
 	m_lastPathId=0;
 }
@@ -77,10 +100,16 @@ void Controller::run()
 
 void Controller::processTasks()
 {
+	static bool alreadyStopped=false;
 
-	if (m_ggs.getGameState().phase != refBoxComm::GameState::EXPLORATION )//||
-		//m_ggs.getGameState().state != refBoxComm::GameState::RUNNING)
+	if (m_ggs.getGameState().phase != refBoxComm::GameState::EXPLORATION ||
+		m_ggs.getGameState().state != refBoxComm::GameState::RUNNING)
 	{
+		if (!alreadyStopped)
+		{
+			executePath(0, executePath::command::Request::CANCEL);
+			alreadyStopped=true;
+		}
 		//arret des robots
 	}
 	else
@@ -110,6 +139,8 @@ void Controller::processTasks()
 				}
 			}
 		}
+
+		alreadyStopped=false;
 	}
 	//supprimer les taches terminées
 }

@@ -31,14 +31,15 @@
 class Controller {
 
 public:
-	Controller(std::string robotName, int robotNumber);
-	virtual ~Controller();
 
 	enum Team {
 		cyan,
 		magenta
 	};
 
+	Controller();
+	Controller(std::string robotName, int robotNumber, Team team);
+	virtual ~Controller();
 
 	void run();
 

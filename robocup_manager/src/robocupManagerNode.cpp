@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 
 	ros::init(argc, argv, "robocupManagerNode");
 
-	Controller controller("R1", 1);
+	Controller controller;
 /*
 	ExploreMachineTask* t1 = new ExploreMachineTask(controller.getArenaState(), &controller);
 	controller.addJob(t1);
