@@ -1,0 +1,21 @@
+<package>
+  <description brief="robocup_manager">
+
+     robocup_manager
+
+  </description>
+  <author>vincent</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/robocup_manager</url>
+  <depend package="std_msgs"/>
+  <depend package="geometry_msgs"/>
+  <depend package="tf"/>
+  <depend package="rospy"/>
+  <depend package="roscpp"/>
+  <depend package="refBoxComm"/>
+  <depend package="executePath"/>
+  <depend package="rbqt_lecture_feu_tricolore"/>
+</package>
+
+
