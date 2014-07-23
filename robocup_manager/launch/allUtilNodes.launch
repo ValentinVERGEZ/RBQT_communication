@@ -1,0 +1,16 @@
+<launch>
+    <node pkg="robotino_local_move" type="robotino_local_move_server_node" name="robotino_local_move_server_node" output="screen" launch-prefix="xterm -e" >
+        <param name="min_forward_vel" value="0.05" />
+        <param name="max_forward_vel" value="0.1" />
+        <param name="min_forward_vel_distance" value="0.1" />
+        <param name="max_forward_vel_distance" value="0.2" />
+        <param name="min_rotational_vel" value="0.05" />            // 2.9deg/s
+        <param name="max_rotational_vel" value="0.3" />             // 17.2deg/s
+        <param name="min_rotational_vel_distance" value="0.1" />    // 2.9deg
+        <param name="max_rotational_vel_distance" value="0.2" />    // 11.5deg
+    </node>
+    <node name="pathfinder_server" pkg="rbqt_pathfinder" type="server" args="" output="screen" launch-prefix="xterm -e"/>
+    <node name="execute_path" pkg="executePath" type="executePath" args="" output="screen" launch-prefix="xterm -e" />
+    <node name="refbox_comm" pkg="refBoxComm" type="refBoxComm" args="" output="screen" launch-prefix="xterm -e"/>
+    <node name="lecture_feu" pkg="rbqt_lecture_feu_tricolore" type="lecture_feu" args="" output="screen" launch-prefix="xterm -e" />
+</launch>
