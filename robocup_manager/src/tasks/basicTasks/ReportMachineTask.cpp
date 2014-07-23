@@ -19,6 +19,7 @@
 #include "refBoxComm/ExplorationSignal.h"
 #include "refBoxComm/ExplorationInfo.h"
 #include "utils/geometry_utils.h"
+#include <tf/transform_datatypes.h>
 
 ReportMachineTask::ReportMachineTask(ArenaState *as, Controller *c, GeneralGameStatus *ggs, std::string machineName)
 	: SimpleTask(as, c, ggs)
@@ -39,7 +40,16 @@ bool ReportMachineTask::checkInitialConditionsImpl()
 {
 	bool robotAtDestination = isSame(m_assigned->getPose(), m_as->getExplorationPose(m_machineName));
 
-	return robotAtDestination && !m_assigned->isBusy() && m_as->getSignals().size() !=0 && m_as->getMachines().size();
+	ROS_INFO("ReportMachine initCond : actualPose = (%f, %f, %f)", m_assigned->getPose().position.x,
+			 	 	 	 	 	 	 	 	 	 	 	  	 	   m_assigned->getPose().position.y,
+			 	 	 	 	 	 	 	 	 	 	 	 	 	   tf::getYaw( m_assigned->getPose().orientation));
+
+	ROS_INFO("ReportMachine initCond : destPose   = (%f, %f, %f)", m_as->getExplorationPose(m_machineName).position.x,
+																   m_as->getExplorationPose(m_machineName).position.y,
+				 	 	 	 	 	 	 	 	 	 	 	 	   tf::getYaw( m_as->getExplorationPose(m_machineName).orientation));
+
+	!m_assigned->isBusy();
+	return robotAtDestination && m_as->getSignals().size() !=0 && m_as->getMachines().size();
 }
 
 bool ReportMachineTask::checkFailConditions()

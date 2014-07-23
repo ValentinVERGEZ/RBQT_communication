@@ -97,6 +97,7 @@ void ComposedTask::executePostCompletion()
 		//there is another task
 		m_taskIndex++;
 		setState(State::READY);
+		getCurrentTask()->setState(State::READY);
 	}else {
 		//there is no other task
 		setState(State::COMPLETED);
