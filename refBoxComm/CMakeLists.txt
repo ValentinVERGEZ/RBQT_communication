@@ -31,7 +31,7 @@ rosbuild_gensrv()
 
 
 #set(LLSF_BASEDIR /home/vincent/refbox/llsf-refbox-crypto)
-set(LLSF_BASEDIR $HOME/refbox/llsf-refbox)
+set(LLSF_BASEDIR $ENV{HOME}/refbox/llsf-refbox)
 #set(CONFDIR ${LLSF_BASEDIR}/cfg)
 set(CONFDIR ${PROJECT_SOURCE_DIR}/cfg)
 
