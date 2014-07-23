@@ -24,6 +24,14 @@
 
 #include "refBoxComm/ExplorationSignal.h"
 
+#ifndef OFFSET
+    #define OFFSET 0.56
+#endif
+
+#ifndef M_PI
+    #define M_PI 3.14159265359
+#endif
+
 class ArenaState {
 public:
 	ArenaState();
@@ -54,6 +62,11 @@ public:
 		m_signals[type] = ls;
 	}
 
+	geometry_msgs::Pose getExplorationPose(std::string machineName)
+	{
+		return m_explorationsPoses[machineName];
+	}
+
 
 protected:
 	std::map<std::string, Machine*> m_machines;
@@ -62,10 +75,15 @@ protected:
 
 	std::map<std::string, refBoxComm::ExplorationSignal> m_signals;
 
+	std::map<std::string, geometry_msgs::Pose> m_explorationsPoses;
+
 	InputStorage m_cyanStorage;
 	InputStorage m_magentaStorage;
 
 	std::vector<Puck*> m_pucks;
+
+	void generateExplorationPoses(std::map<std::string, geometry_msgs::Pose> &ExplorationPoses);
+	geometry_msgs::Pose calculPoint (int xgrille, int ygrille, float yaw);
 };
 
 #endif /* ARENASTATE_H_ */

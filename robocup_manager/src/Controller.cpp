@@ -13,7 +13,7 @@
 #include <ros/ros.h>
 #include <tf/transform_datatypes.h>
 #include <boost/bind.hpp>
-#include <string.h>
+#include <string>
 
 #include "Controller.h"
 #include "refBoxComm/GameState.h"
@@ -31,22 +31,24 @@ Controller::Controller(): m_nh("~")
 	m_stopController = false;
 
 	std::string t;
-	m_nh.getParam("team", t);
+	m_nh.param<std::string>("team", t, "magenta" );
+	m_nh.param<std::string>("robot_name", m_robotName, "R1" );
+
+	//m_nh.getParam("team", t);
 	m_team = (t=="cyan" ? Controller::cyan : Controller::magenta);
 	ROS_INFO("Robot team : %s", t.c_str());
 
-	m_nh.getParam("robot_name", m_robotName);
+	//m_nh.getParam("robot_name", m_robotName);
 	ROS_INFO("Robot name : %s", m_robotName.c_str());
 
 	m_robotNumber = stoi(m_robotName.substr(1));
 	ROS_INFO("Robot number : %d", m_robotNumber);
 
 
-
 	m_lastPathId=0;
 }
 
-Controller::Controller(std::string robotName, int robotNumber, Team team): m_nh("~")
+Controller::Controller(std::string robotName, int robotNumber, Team team)
 {
 
 	m_stopController = false;
@@ -75,6 +77,7 @@ void Controller::run()
 	//m_pathFoundSub = m_nh.subscribe("/pathFound", 1000, &Controller::gameStateCB, this);
 	m_edCStateSub = m_nh.subscribe("/EdCState", 1000, &Controller::executePathCB, this);
 	m_lectureFeuSub = m_nh.subscribe("/rbqt_lecture_feu_tricolore/result", 1000, &Controller::lectureFeuCB, this);
+	m_odomSub = m_nh.subscribe("/odom", 1000, &Controller::odomCB, this);
 
 	//Initialize service client
 	m_reportMachineSC = m_nh.serviceClient<refBoxComm::ReportMachine>("refBoxComm/ReportMachine");
@@ -126,7 +129,7 @@ void Controller::processTasks()
 			//if the task is ready, then run it
 			if((*jobIter)->getState()==AbstractTask::State::READY) {
 				(*jobIter)->execute();
-				ROS_INFO("Controller : Task ready, executing...");
+				//ROS_INFO("Controller : Task ready, executing... %s",(*jobIter)->getDescrition().c_str() );
 			}
 			//if the task is running we have to check that
 			//1) it isn't already completed
@@ -134,8 +137,10 @@ void Controller::processTasks()
 			if((*jobIter)->getState()==AbstractTask::State::RUNNING) {
 				if((*jobIter)->checkFailConditions()) {
 					(*jobIter)->executeCancelation(); //also sets state to failed
+					ROS_INFO("Controller : Task cancel : %s",(*jobIter)->getDescrition().c_str() );
 				}else if((*jobIter)->checkCompletionConditions()) {
 					(*jobIter)->executePostCompletion(); //also sets state to completed
+					ROS_INFO("Controller : Task completed : %s",(*jobIter)->getDescrition().c_str() );
 				}
 			}
 		}
@@ -223,6 +228,10 @@ bool Controller::generatePath(int &id, geometry_msgs::Pose &start, geometry_msgs
 	}
 }
 
+void Controller::odomCB(const nav_msgs::Odometry &odo)
+{
+	m_as.getRobotino(m_robotName)->updatePosition(odo.pose.pose);
+}
 
 bool Controller::executePath(int id, int type)
 {

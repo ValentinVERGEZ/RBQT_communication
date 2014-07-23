@@ -3,7 +3,7 @@
   <arg name="robot_name" default="R1" />
 
   
-        <node name="robocup_manager" pkg="robocup_manager" type="robocupManagerNode" output="screen">
+        <node name="robocupManagerNode" pkg="robocup_manager" type="robocupManagerNode" output="screen" >
                 <param name="team" value="$(arg team)" />
                 <param name="robot_name" value="$(arg robot_name)" />
         </node>

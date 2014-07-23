@@ -25,23 +25,29 @@ public:
 
 	void addTask(SimpleTask *t);
 	AbstractTask* getCurrentTask();
+	void assignActor(Actor *a);
 
-	virtual bool checkInitialConditions()
-	{return true;}
-
-	virtual bool checkFailConditions()
-	{return false;}
-
-	virtual void executeCancelation(){}
-
-	virtual std::string executeCancelationImpl(){}
-
-	virtual bool checkCompletionConditions()
-	{return true;}
-
-	virtual void executePostCompletion(){}
+	virtual std::string getDescrition()
+	{
+		std::stringstream sstr;
+		sstr << m_description  << ", subtask :" << getCurrentTask()->getDescrition();
+		return sstr.str();m_description;
+	}
 
 
+	virtual bool checkInitialConditions();
+
+	virtual bool checkFailConditions();
+
+	virtual void executeCancelation();
+
+	virtual std::string executeCancelationImpl();
+
+	virtual bool checkCompletionConditions();
+
+	virtual void executePostCompletion();
+
+	virtual void execute();
 
 protected:
 	std::vector<SimpleTask *> m_tasks;

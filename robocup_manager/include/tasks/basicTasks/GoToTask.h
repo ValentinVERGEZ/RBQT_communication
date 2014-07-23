@@ -40,7 +40,7 @@ protected:
 	geometry_msgs::Pose m_target;
 
 
-
+	int m_pathId;
 
 };
 

@@ -18,10 +18,10 @@
 
 class ExploreMachineTask : public ComposedTask {
 public:
-	ExploreMachineTask(ArenaState *as, Controller *c, GeneralGameStatus *ggs);
+	ExploreMachineTask(ArenaState *as, Controller *c, GeneralGameStatus *ggs, std::string machineName);
 	virtual ~ExploreMachineTask();
 protected:
-
+	std::string m_destName;
 
 };
 

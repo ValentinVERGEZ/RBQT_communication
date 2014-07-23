@@ -50,6 +50,10 @@ public:
 		return m_assigned;
 	}
 
+	virtual std::string getDescrition()
+	{
+		return m_description;
+	}
 
 	virtual bool checkInitialConditions() = 0;
 

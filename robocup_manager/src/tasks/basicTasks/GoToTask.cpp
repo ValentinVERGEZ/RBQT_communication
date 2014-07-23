@@ -16,11 +16,20 @@
 #include "utils/geometry_utils.h"
 #include "executePath/EdCState.h"
 #include "executePath/command.h"
+#include <sstream>
+#include <tf/transform_datatypes.h>
 
 GoToTask::GoToTask(ArenaState *as, Controller *c, GeneralGameStatus *ggs, geometry_msgs::Pose p)
 	: SimpleTask(as, c, ggs)
 {
 	m_target = p;
+	m_pathId = -1;
+
+	std::stringstream sstr;
+	sstr << "GoToTask, dest : (" << p.position.x << ", "
+							     << p.position.y << ", "
+							     << tf::getYaw(p.orientation) << ")";
+	m_description = sstr.str();
 }
 
 GoToTask::~GoToTask() {
@@ -57,7 +66,7 @@ bool GoToTask::checkCompletionConditions()
 {
 	//le robot atteind la cible et le executePath indique terminé
 	bool robotAtDestination = isSame(m_assigned->getPose(), m_target);
-	return (m_ggs->getEdCState().state == executePath::EdCState::FINISHED);
+	return (m_ggs->getEdCState().ID == m_pathId ) && (m_ggs->getEdCState().state == executePath::EdCState::FINISHED);
 }
 
 void GoToTask::executePostCompletion()
@@ -73,14 +82,14 @@ void GoToTask::executeImpl()
 
 	//compute the path to destination
 	//launch the pathPlanner
-	int id;
-	m_c->generatePath(id, m_start, m_target);
-	ROS_INFO("GoToTask : request path id = %d", id);
+
+	m_c->generatePath(m_pathId, m_start, m_target);
+	ROS_INFO("GoToTask : request path id = %d", m_pathId);
 	//wait the generation of the message
 	sleep(1);
 
 	//send the order to the robotino
 
-	m_c->executePath(id, executePath::command::Request::EXECUTE_PATH);
+	m_c->executePath(m_pathId, executePath::command::Request::EXECUTE_PATH);
 
 }

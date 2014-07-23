@@ -18,12 +18,17 @@
 #include "rbqt_lecture_feu_tricolore/LightSignal.h"
 #include "refBoxComm/ExplorationSignal.h"
 #include "refBoxComm/ExplorationInfo.h"
+#include "utils/geometry_utils.h"
 
 ReportMachineTask::ReportMachineTask(ArenaState *as, Controller *c, GeneralGameStatus *ggs, std::string machineName)
 	: SimpleTask(as, c, ggs)
 {
-	// TODO Auto-generated constructor stub
+
 	m_machineName = machineName;
+
+	std::stringstream sstr;
+	sstr << "ReportMachineTask, machine : " << machineName;
+	m_description = sstr.str();
 }
 
 ReportMachineTask::~ReportMachineTask() {
@@ -32,7 +37,9 @@ ReportMachineTask::~ReportMachineTask() {
 
 bool ReportMachineTask::checkInitialConditionsImpl()
 {
-	return !m_assigned->isBusy() && m_as->getSignals().size() !=0 && m_as->getMachines().size();
+	bool robotAtDestination = isSame(m_assigned->getPose(), m_as->getExplorationPose(m_machineName));
+
+	return robotAtDestination && !m_assigned->isBusy() && m_as->getSignals().size() !=0 && m_as->getMachines().size();
 }
 
 bool ReportMachineTask::checkFailConditions()

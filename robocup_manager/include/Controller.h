@@ -27,6 +27,7 @@
 #include "executePath/EdCState.h"
 #include "rbqt_lecture_feu_tricolore/LightSignal.h"
 #include "rbqt_pathfinder/GeneratePath.h"
+#include "nav_msgs/Odometry.h"
 
 class Controller {
 
@@ -58,6 +59,10 @@ public:
 		return &m_ggs;
 	}
 
+	Actor* findAvailableRobotino()
+	{
+		return m_as.getRobotino(m_robotName);
+	}
 
 	bool generatePath(int &id, geometry_msgs::Pose &start, geometry_msgs::Pose &target);
 	bool executePath(int id, int type);
@@ -87,6 +92,7 @@ protected:
 	ros::Subscriber m_aStarStateSub;
 	ros::Subscriber m_edCStateSub;
 	ros::Subscriber m_lectureFeuSub;
+	ros::Subscriber m_odomSub;
 
 	//ros::Publisher m_
 
@@ -101,7 +107,7 @@ protected:
 	void aStarStateCB();
 	void executePathCB(const executePath::EdCState &edCState);
 	void lectureFeuCB(const rbqt_lecture_feu_tricolore::LightSignal &ls);
-
+	void odomCB(const nav_msgs::Odometry &odo);
 
 	void processTasks();
 

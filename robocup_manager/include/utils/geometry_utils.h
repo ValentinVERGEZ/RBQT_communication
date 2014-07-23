@@ -15,7 +15,7 @@
 
 #include <geometry_msgs/Pose.h>
 
-#define DELTA_EPSILON 0.1
+#define DELTA_EPSILON 0.3
 
 geometry_msgs::Pose quat_normalize(const geometry_msgs::Pose &p);
 
