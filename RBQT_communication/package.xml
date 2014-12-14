@@ -25,7 +25,7 @@
   <!-- Author tags are optional, mutiple are allowed, one per tag -->
   <!-- Authors do not have to be maintianers, but could be -->
   <!-- Example: -->
-  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
+  <author email="vincent.coelen@polytech-lille.net">Vincent Coelen</author>
 
 
   <!-- The *_depend tags are used to specify dependencies -->
@@ -41,7 +41,9 @@
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
 
-
+  <run_depend>refBoxComm</run_depend>
+  <run_depend>robocup_manager</run_depend>
+  
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- You can specify that this package is a metapackage here: -->

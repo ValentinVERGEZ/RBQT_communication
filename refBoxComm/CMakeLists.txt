@@ -21,14 +21,15 @@ rosbuild_genmsg()
 #uncomment if you have defined services
 rosbuild_gensrv()
 
-#common commands for building c++ executables and libraries
-#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
-#rosbuild_add_executable(example examples/example.cpp)
-#target_link_libraries(example ${PROJECT_NAME})
-
+###################################
+## catkin specific configuration ##
+###################################
+catkin_package(
+#  INCLUDE_DIRS include
+#  LIBRARIES beginner_tutorials
+  CATKIN_DEPENDS message_runtime roscpp rospy std_msgs
+#  DEPENDS system_lib
+)
 
 #set(LLSF_BASEDIR /home/vincent/refbox/llsf-refbox-crypto)
 set(LLSF_BASEDIR $ENV{HOME}/refbox/llsf-refbox)

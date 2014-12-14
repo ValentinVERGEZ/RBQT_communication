@@ -1,4 +1,5 @@
 <package>
+  <name>robocup_manager</name>
   <description brief="robocup_manager">
 
      robocup_manager
