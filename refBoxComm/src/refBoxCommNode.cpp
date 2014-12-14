@@ -208,6 +208,7 @@ refBoxComm::ExplorationInfo llsf2ros_explorationInfo(llsf_msgs::ExplorationInfo 
         machine.pose.x = em.pose().x();
         machine.pose.y = em.pose().y();
         machine.pose.theta =em.pose().ori();
+        machine.team_color = em.team_color();
         
         rosExplorationInfo.machines.push_back(machine);
     }
