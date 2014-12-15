@@ -1,23 +1,37 @@
+<?xml version="1.0"?>
 <package>
   <name>refBoxComm</name>
-  <description brief="refBoxComm">
+  <version>0.0.0</version>
+  <description>
 
      refBoxComm
 
   </description>
-  <author>vincent</author>
-  <license>BSD</license>
-  <review status="unreviewed" notes=""/>
+  <maintainer email="vincent.coelen@polytech-lille.net">vincent</maintainer>
+  <license>TODO</license>
+
   <url>http://ros.org/wiki/refBoxComm</url>
-  <depend package="std_msgs"/>
-  <depend package="geometry_msgs"/>
-  <depend package="rospy"/>
-  <depend package="roscpp"/>
-  <depend package="nav_msgs"/>
-  <depend package="tf"/>
   
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>tf</build_depend>
+  
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>tf</run_depend>
+    
   <export>
-    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib"/>
+<!--    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib"/> -->
   </export>
 
 </package>

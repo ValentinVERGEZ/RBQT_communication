@@ -1,22 +1,41 @@
 <package>
   <name>robocup_manager</name>
-  <description brief="robocup_manager">
+  <version>0.0.0</version>
+  <description>
 
      robocup_manager
 
   </description>
-  <author>vincent</author>
-  <license>BSD</license>
-  <review status="unreviewed" notes=""/>
+  <maintainer email="vincent.coelen@polytech-lille.net">vincent</maintainer>
+  <license>TODO</license>
+
   <url>http://ros.org/wiki/robocup_manager</url>
-  <depend package="std_msgs"/>
-  <depend package="geometry_msgs"/>
-  <depend package="tf"/>
-  <depend package="rospy"/>
-  <depend package="roscpp"/>
-  <depend package="refBoxComm"/>
-  <depend package="executePath"/>
-  <depend package="rbqt_lecture_feu_tricolore"/>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>refBoxComm</build_depend>
+  <build_depend>executePath</build_depend>
+  <build_depend>rbqt_lecture_feu_tricolore</build_depend>  
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>refBoxComm</run_depend>
+  <run_depend>executePath</run_depend>
+  <run_depend>rbqt_lecture_feu_tricolore</run_depend>
+
+
 </package>
 
 
