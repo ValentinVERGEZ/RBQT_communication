@@ -60,7 +60,6 @@ set(CONFDIR ${PROJECT_SOURCE_DIR}/cfg)
 
 add_definitions( -DCONFDIR=\\"${CONFDIR}\\" )
 add_definitions( -DUSERDIR=\\".\\" )
-add_definitions( -DBOOST_DATE_TIME_POSIX_TIME_STD_CONFIG)
 
 include_directories(${LLSF_BASEDIR}/src/libs ${roscpp_INCLUDE_DIRS})
 include_directories(${LLSF_BASEDIR}/src ${roscpp_INCLUDE_DIRS})
@@ -96,8 +95,8 @@ target_link_libraries(
   llsf_protobuf_comm 
   protobuf 
   llsfrbconfig
-  llsfrbcore
-  llsfrbutils
+  #llsfrbcore
+  #llsfrbutils
   yaml-cpp
 
   ${Boost_LIBRARIES} 
@@ -111,8 +110,8 @@ target_link_libraries(
   ${roscpp_LIBRARIES}
 )
 
-set_target_properties(refBoxTransport PROPERTIES COMPILE_FLAGS -std=c++0x)
-set_target_properties(refBoxComm PROPERTIES COMPILE_FLAGS -std=c++0x)
+set_target_properties(refBoxTransport PROPERTIES COMPILE_FLAGS "-std=c++0x -g3")
+set_target_properties(refBoxComm PROPERTIES COMPILE_FLAGS "-std=c++0x -g3")
 
 #############
 ## Install ##
